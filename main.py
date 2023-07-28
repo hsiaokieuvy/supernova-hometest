@@ -1,7 +1,8 @@
 from wrapper.api_wrapper import APIWrapper
 from wrapper.mysql_wrapper import MySQLWrapper
 from datetime import datetime
-import argparse, logging
+from logging import Logger
+import argparse, logging, os
 
 def argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
@@ -13,11 +14,7 @@ def argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("mysql_password", help="MySQL password", type=str)
     return parser
 
-def main():
-    # Parse arguments
-    args = argument_parser().parse_args()
-
-    # Configure logger
+def configure_logger() -> Logger:
     now = datetime.now()
     now_str = now.strftime("%d-%m-%Y_%H-%M-%S")
     logger = logging.getLogger("supernova")
@@ -26,6 +23,21 @@ def main():
     formatter = logging.Formatter("%(asctime)s - [%(levelname)s] - %(message)s")
     handler.setFormatter(fmt=formatter)
     logger.addHandler(hdlr=handler)
+    return logger
+
+def main():
+    # Parse arguments
+    args = argument_parser().parse_args()
+
+    # Create log folder
+    dir_path = "./log"
+    if os.path.exists(dir_path):
+        pass
+    else:
+        os.makedirs(dir_path)
+
+    # Configure logger
+    logger = configure_logger()
 
     try:
         logger.info(f"Fetching from table {args.table_name}...")
