@@ -19,7 +19,7 @@ def configure_logger() -> Logger:
     now_str = now.strftime("%d-%m-%Y_%H-%M-%S")
     logger = logging.getLogger("supernova")
     logger.setLevel(level=logging.INFO)
-    handler = logging.FileHandler(filename=fr"./log/supernovatest_{now_str}.log", mode="w")
+    handler = logging.FileHandler(filename=fr"./log/supernovatest_ingest_transform_{now_str}.log", mode="w")
     formatter = logging.Formatter("%(asctime)s - [%(levelname)s] - %(message)s")
     handler.setFormatter(fmt=formatter)
     logger.addHandler(hdlr=handler)

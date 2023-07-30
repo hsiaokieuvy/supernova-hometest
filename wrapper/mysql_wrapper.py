@@ -86,7 +86,8 @@ class MySQLWrapper:
 
         logger.info(f"Processing table [{table_name}] with Batch ID {batch_id}...")
         result_df = df.copy()
-        result_df.rename(columns=column_mapping, inplace=True)
+        if result_df.shape[1] > 1:
+            result_df.rename(columns=column_mapping, inplace=True)
         result_df["batchId"] = batch_id
 
         self.insert_from_dataframe(mysql_table_name=mysql_table_name, df=result_df, logger=logger)
@@ -170,6 +171,14 @@ class MySQLWrapper:
             "id": "postId"
         }
 
+        logger.info(f"Processing sub table [users] in table [{table_name}] with Batch ID {batch_id}...")
+        # Process users data
+        # ------------------------------------------------------------------------------------------------
+        user_df = df[["userId"]]
+        user_df = user_df.drop_duplicates()
+        self.process_users(df=user_df, logger=logger)
+        # ------------------------------------------------------------------------------------------------
+
         logger.info(f"Processing table [{table_name}] with Batch ID {batch_id}...")
         result_df = df.copy()
         result_df.rename(columns=column_mapping, inplace=True)
@@ -202,7 +211,7 @@ class MySQLWrapper:
 
         temp_df = df.rename(columns=column_mapping).rename(columns=user_column_mapping)
 
-        logger.info(f"Processing sub table [products] in table [{table_name}] with Batch ID {batch_id}...")
+        logger.info(f"Processing sub table [users] in table [{table_name}] with Batch ID {batch_id}...")
         # Process users data
         # ------------------------------------------------------------------------------------------------
         user_df = temp_df[user_columns]
